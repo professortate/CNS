@@ -15,6 +15,22 @@ void generateVigenereTable() {
     }
 }
 
+void displayVigenereTable() {
+    printf("Vigenère Table:\n   ");
+    for (char c = 'A'; c <= 'Z'; c++) {
+        printf(" %c", c);
+    }
+    printf("\n");
+
+    for (int i = 0; i < 26; i++) {
+        printf("%c: ", 'A' + i);
+        for (int j = 0; j < 26; j++) {
+            printf(" %c", vigenereTable[i][j]);
+        }
+        printf("\n");
+    }
+}
+
 void toUpperCase(char *str) {
     for (int i = 0; str[i]; i++) {
         str[i] = toupper(str[i]);
@@ -63,11 +79,12 @@ void decryptVigenere(char *ciphertext, char *key) {
 
 int main() {
     generateVigenereTable();
+    displayVigenereTable();  // Display the table before asking for input
 
     char plaintext[MAX_TEXT_LENGTH];
     char key[MAX_KEY_LENGTH];
 
-    printf("Enter plaintext: ");
+    printf("\nEnter plaintext: ");
     fgets(plaintext, sizeof(plaintext), stdin);
     plaintext[strcspn(plaintext, "\n")] = '\0'; // Remove newline
 
