@@ -1,0 +1,58 @@
+#include <stdio.h> 
+#include <string.h> 
+#include <ctype.h> 
+#define MAX_TEXT_LENGTH 1000 
+#define MAX_KEY_LENGTH 100 
+char vigenereTable[26][26]; 
+void generateVigenereTable() { 
+for (int i = 0; i < 26; i++) { 
+for (int j = 0; j < 26; j++) { 
+vigenereTable[i][j] = 'A' + (i + j) % 26; 
+} 
+} 
+} 
+void encryptVigenere(char *plaintext, char *key) { 
+int plaintextLength = strlen(plaintext); 
+int keyLength = strlen(key); 
+int keyIndex = 0; 
+for (int i = 0; i < plaintextLength; i++) { 
+if (isalpha(plaintext[i])) { 
+plaintext[i] = toupper(plaintext[i]); 
+plaintext[i] = vigenereTable[key[keyIndex] - 'A'][plaintext[i] - 'A']; 
+keyIndex = (keyIndex + 1) % keyLength; 
+} 
+} 
+} 
+void decryptVigenere(char *ciphertext, char *key) { 
+int ciphertextLength = strlen(ciphertext); 
+int keyLength = strlen(key); 
+int keyIndex = 0; 
+for (int i = 0; i < ciphertextLength; i++) { 
+if (isalpha(ciphertext[i])) { 
+ciphertext[i] = toupper(ciphertext[i]); 
+for (int j = 0; j < 26; j++) { 
+if (vigenereTable[key[keyIndex] - 'A'][j] == ciphertext[i]) { 
+ciphertext[i] = 'A' + j; 
+break; 
+} 
+} 
+keyIndex = (keyIndex + 1) % keyLength; 
+} 
+} 
+} 
+int main() { 
+generateVigenereTable(); 
+char plaintext[MAX_TEXT_LENGTH]; 
+char key[MAX_KEY_LENGTH]; 
+printf("Enter plaintext: "); 
+fgets(plaintext, sizeof(plaintext), stdin); 
+plaintext[strcspn(plaintext, "\n")] = '\0'; // Remove newline character 
+printf("Enter key: "); 
+fgets(key, sizeof(key), stdin); 
+key[strcspn(key, "\n")] = '\0'; // Remove newline character 
+encryptVigenere(plaintext, key); 
+printf("Encrypted text: %s\n", plaintext); 
+decryptVigenere(plaintext, key); 
+printf("Decrypted text: %s\n", plaintext); 
+return 0; 
+} 

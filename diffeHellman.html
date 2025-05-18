@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Diffie-Hellman Key Exchange</title>
+  <style>
+    body {
+      padding: 25px;
+      font-family: Arial, sans-serif;
+    }
+    .title {
+      color: #5C6AC4;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    #currentTime {
+      margin-bottom: 20px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+
+<div class="title">Diffie-Hellman Key Exchange</div>
+<div id="currentTime"></div>
+
+<script>
+  // Show current UTC time and update every second
+  function showTime() {
+    document.getElementById('currentTime').innerHTML = "Current UTC Time: " + new Date().toUTCString();
+  }
+  showTime();
+  setInterval(showTime, 1000);
+
+  // Power function to return value of a^b mod P
+  function power(a, b, p) {
+    if (b == 1)
+      return a % p;
+    else
+      return (Math.pow(a, b) % p);
+  }
+
+  // Diffie-Hellman Key Exchange logic
+  var P = parseInt(prompt("Enter a prime number P:"));
+  document.write("The value of P: " + P + "<br>");
+
+  var G = parseInt(prompt("Enter a primitive root G:"));
+  document.write("The value of G: " + G + "<br>");
+
+  var a = parseInt(prompt("Enter the private key for Alice (a):"));
+  document.write("The private key (a) for Alice: " + a + "<br>");
+  var x = power(G, a, P);
+
+  var b = parseInt(prompt("Enter the private key for Bob (b):"));
+  document.write("The private key (b) for Bob: " + b + "<br>");
+  var y = power(G, b, P);
+
+  var ka = power(y, a, P);
+  var kb = power(x, b, P);
+
+  document.write("Secret key for Alice is: " + ka + "<br>");
+  document.write("Secret key for Bob is: " + kb + "<br>");
+</script>
+
+</body>
+</html>
