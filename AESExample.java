@@ -1,42 +1,39 @@
-import javax.crypto.Cipher; 
-import javax.crypto.KeyGenerator; 
-import javax.crypto.SecretKey; 
-import javax.crypto.spec.SecretKeySpec; 
-import java.util.Base64; 
-public class AESExample { 
-// Method to generate a secret key 
-public static SecretKey generateKey(int n) throws Exception { 
-KeyGenerator keyGenerator = KeyGenerator.getInstance("AES"); 
-keyGenerator.init(n); 
-SecretKey secretKey = keyGenerator.generateKey(); 
-return secretKey; 
-} 
-// Method to encrypt a plaintext using a secret key 
-public static String encrypt(String plainText, SecretKey secretKey) throws Exception { 
-Cipher cipher = Cipher.getInstance("AES"); 
-cipher.init(Cipher.ENCRYPT_MODE, secretKey); 
-byte[] encryptedBytes = cipher.doFinal(plainText.getBytes()); 
-return Base64.getEncoder().encodeToString(encryptedBytes); 
-} 
-// Method to decrypt a ciphertext using a secret key 
-public static String decrypt(String cipherText, SecretKey secretKey) throws Exception 
-{ 
-Cipher cipher = Cipher.getInstance("AES"); 
-cipher.init(Cipher.DECRYPT_MODE, secretKey); 
-byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(cipherText)); 
-return new String(decryptedBytes); 
-} 
-// Main method to demonstrate encryption and decryption 
-public static void main(String[] args) { 
-try { 
-String plainText = "Hello, this is a secret message!"; 
-SecretKey secretKey = generateKey(128); 
-String encryptedText = encrypt(plainText, secretKey); 
-System.out.println("Encrypted Text: " + encryptedText); 
-String decryptedText = decrypt(encryptedText, secretKey); 
-System.out.println("Decrypted Text: " + decryptedText); 
-} catch (Exception e) { 
-e.printStackTrace(); 
-} 
-} 
-}  
+import java.util.Scanner;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.Cipher;
+import java.util.Base64;
+
+public class AESExample {
+    public static void main(String[] args) throws Exception {
+        // Read input from user
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter text to encrypt: ");
+        String plaintext = scanner.nextLine();
+
+        // Generate AES key
+        KeyGenerator keyGenerator = KeyGenerator.getInstance("AES");
+        keyGenerator.init(256); // 256-bit AES key
+        SecretKey secretKey = keyGenerator.generateKey();
+
+        // Create AES cipher instance and initialize for encryption
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
+
+        // Encrypt plaintext
+        byte[] encryptedBytes = cipher.doFinal(plaintext.getBytes());
+        String encryptedText = Base64.getEncoder().encodeToString(encryptedBytes);
+        System.out.println("Encrypted text: " + encryptedText);
+
+        // Initialize cipher for decryption
+        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+
+        // Decrypt the text
+        byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedText));
+        String decryptedText = new String(decryptedBytes);
+        System.out.println("Decrypted text: " + decryptedText);
+
+        // Close scanner
+        scanner.close();
+    }
+}
