@@ -1,34 +1,39 @@
-import javax.crypto.*;
-import java.security.*;
+import java.util.Scanner;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.Cipher;
 import java.util.Base64;
-import java.nio.charset.StandardCharsets;
 
 public class DESExample {
     public static void main(String[] args) throws Exception {
-        String message = "This is a confidential message.";
-        byte[] myMessage = message.getBytes(StandardCharsets.UTF_8);
+        // Read input from user
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter text to encrypt: ");
+        String plaintext = scanner.nextLine();
 
-        // Generate DES Key
+        // Generate DES key
         KeyGenerator keyGenerator = KeyGenerator.getInstance("DES");
-        SecretKey myDesKey = keyGenerator.generateKey();
+        keyGenerator.init(56); // DES uses 56-bit key
+        SecretKey secretKey = keyGenerator.generateKey();
 
-        // Initialize Cipher
-        Cipher myCipher = Cipher.getInstance("DES");
+        // Create DES cipher instance and initialize for encryption
+        Cipher cipher = Cipher.getInstance("DES");
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey);
 
-        // Encrypt
-        myCipher.init(Cipher.ENCRYPT_MODE, myDesKey);
-        byte[] encryptedBytes = myCipher.doFinal(myMessage);
+        // Encrypt plaintext
+        byte[] encryptedBytes = cipher.doFinal(plaintext.getBytes());
+        String encryptedText = Base64.getEncoder().encodeToString(encryptedBytes);
+        System.out.println("Encrypted text: " + encryptedText);
 
-        // Decrypt
-        myCipher.init(Cipher.DECRYPT_MODE, myDesKey);
-        byte[] decryptedBytes = myCipher.doFinal(encryptedBytes);
+        // Initialize cipher for decryption
+        cipher.init(Cipher.DECRYPT_MODE, secretKey);
 
-        // Encode/Decode Base64 for readability
-        String encryptedData = Base64.getEncoder().encodeToString(encryptedBytes);
-        String decryptedData = new String(decryptedBytes, StandardCharsets.UTF_8);
+        // Decrypt the text
+        byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedText));
+        String decryptedText = new String(decryptedBytes);
+        System.out.println("Decrypted text: " + decryptedText);
 
-        System.out.println("Original Message: " + message);
-        System.out.println("Encrypted Message (Base64): " + encryptedData);
-        System.out.println("Decrypted Message: " + decryptedData);
+        // Close scanner
+        scanner.close();
     }
 }
